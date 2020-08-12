@@ -6,13 +6,14 @@ const queues = Object.values(jobs).map((job) => ({
   bull: new Queue(job.key, redisConfig),
   name: job.key,
   handle: job.handle,
+  options: job.options,
 }));
 
 export default {
   queues,
   add(name, data) {
     const queueFound = this.queues.find((queue) => queue.name === name);
-    return queueFound.bull.add(data);
+    return queueFound.bull.add(data, queueFound.options);
   },
   process() {
     return this.queues.forEach((queue) => {
